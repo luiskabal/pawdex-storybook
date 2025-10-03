@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Avatar from '../../atoms/Avatar';
 import ProgressBar from '../../atoms/ProgressBar';
 import Badge from '../../atoms/Badge';
@@ -191,7 +191,8 @@ const Card: React.FC<CardProps> = ({
     setMousePosition({ x, y });
   }, []);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+  // Global mouse move handler for tracking outside the card
+  const handleGlobalMouseMove = useCallback((e: MouseEvent) => {
     if (!isClickHolding || !cardRef.current) return;
     
     const rect = cardRef.current.getBoundingClientRect();
@@ -201,15 +202,26 @@ const Card: React.FC<CardProps> = ({
     setMousePosition({ x, y });
   }, [isClickHolding]);
 
-  const handleMouseUp = useCallback(() => {
-    setIsClickHolding(false);
-    setMousePosition(undefined);
-  }, []);
+  // Global mouse up handler to stop the effect anywhere
+  const handleGlobalMouseUp = useCallback(() => {
+    if (isClickHolding) {
+      setIsClickHolding(false);
+      setMousePosition(undefined);
+    }
+  }, [isClickHolding]);
 
-  const handleMouseLeave = useCallback(() => {
-    setIsClickHolding(false);
-    setMousePosition(undefined);
-  }, []);
+  // Add global event listeners when click-and-hold is active
+  useEffect(() => {
+    if (isClickHolding) {
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('mouseup', handleGlobalMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleGlobalMouseMove);
+        document.removeEventListener('mouseup', handleGlobalMouseUp);
+      };
+    }
+  }, [isClickHolding, handleGlobalMouseMove, handleGlobalMouseUp]);
 
 
 
@@ -222,9 +234,6 @@ const Card: React.FC<CardProps> = ({
       clickable={clickable || flippable || !!onClick}
       className={className}
       onClick={handleCardClick}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
       onMouseDown={handleMouseDown}
       isClickHolding={isClickHolding}
       mousePosition={mousePosition}
