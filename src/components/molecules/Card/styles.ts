@@ -122,7 +122,7 @@ export const CardBackground = styled.div<{ rarity: CardRarity; type: PokemonType
 export const FlipContainer = styled.div<{ isFlipped: boolean; clickable: boolean }>`
   position: relative;
   width: 280px;
-  height: 400px;
+  height: 450px;
   perspective: 1000px;
   transition: transform 0.3s ease;
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyledAvatar, AvatarImage, AvatarFallback, AvatarBorder } from './styles';
 
-export type AvatarSize = 'small' | 'medium' | 'large' | 'xl';
+export type AvatarSize = 'small' | 'medium' | 'large' | 'xl' | 'xxl';
 export type AvatarVariant = 'circular' | 'rounded' | 'square';
 export type AvatarRarity = 'common' | 'uncommon' | 'rare' | 'ultra-rare' | 'secret-rare';
 

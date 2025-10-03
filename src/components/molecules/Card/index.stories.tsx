@@ -73,7 +73,8 @@ type Story = StoryObj<typeof meta>;
 // Default story
 export const Default: Story = {
   args: {
-    name: 'Pikachu',
+    name: 'Thunder Cat',
+    imageUrl: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400&h=400&fit=crop&crop=face',
     type: PokemonType.ELECTRIC,
     rarity: CardRarity.COMMON,
     hp: 60,
@@ -82,54 +83,43 @@ export const Default: Story = {
     defense: 40,
     moves: [
       {
-        name: 'Thunder Shock',
-        damage: '20',
-        energyCost: '1',
-        description: 'Flip a coin. If tails, this attack does nothing.',
+        name: 'Lightning Pounce',
+        damage: '40',
+        energyCost: '2',
+        description: 'A quick electric attack that rarely misses.',
       },
       {
-        name: 'Agility',
-        energyCost: '2',
-        description: 'Flip a coin. If heads, prevent all effects of attacks, including damage, done to Pikachu during your opponent\'s next turn.',
+        name: 'Quick Strike',
+        damage: '20',
+        energyCost: '1',
+        description: 'A fast attack using sharp claws.',
       },
     ],
-    description: 'When several of these Pokémon gather, their electricity could build and cause lightning storms.',
-    cardNumber: '025',
+    description: 'A nimble feline with electric abilities. Its fur crackles with static energy.',
+    cardNumber: '001',
     flippable: true,
-    cardBackTitle: 'Electric Mouse Pokémon',
-    cardBackSubtitle: 'Generation I',
+    cardBackTitle: 'Electric Cat',
+    cardBackSubtitle: 'Animal Kingdom',
   },
 };
 
 // Fire type Pokemon
-export const Charizard: Story = {
+export const Rare: Story = {
   args: {
-    name: 'Charizard',
-    type: PokemonType.FIRE,
+    name: 'Flame Wolf',
+    imageUrl: 'https://images.unsplash.com/photo-1546026423-cc4642628d2b?w=400&h=400&fit=crop&crop=face',
     rarity: CardRarity.RARE,
+    type: PokemonType.FIRE,
     hp: 120,
-    maxHp: 120,
-    attack: 84,
-    defense: 78,
     moves: [
-      {
-        name: 'Fire Spin',
-        damage: '100',
-        energyCost: '4',
-        description: 'Discard 2 Energy attached to this Pokémon.',
-      },
-      {
-        name: 'Flame Thrower',
-        damage: '60',
-        energyCost: '3',
-        description: 'Discard an Energy card attached to this Pokémon.',
-      },
+      { name: 'Howling Flames', damage: 80, energyCost: 3 },
+      { name: 'Pack Hunt', damage: 60, energyCost: 2 }
     ],
-    description: 'Spits fire that is hot enough to melt boulders. Known to cause forest fires unintentionally.',
-    cardNumber: '006',
-    flippable: true,
-    cardBackTitle: 'Lizard Pokémon',
-    cardBackSubtitle: 'Generation I',
+    description: 'A majestic wolf with the power to control fire. Leads its pack through burning forests.',
+    flavorText: 'Its howl can ignite the very air around it.',
+    artist: 'Wildlife Photographer',
+    cardNumber: '002',
+    setName: 'Animal Kingdom'
   },
 };
 
@@ -401,89 +391,93 @@ export const TypeShowcase: Story = {
 
 // Add a new story specifically for flip functionality
 export const FlipShowcase: Story = {
+  args: {
+    name: 'Forest Guardian',
+    imageUrl: 'https://images.unsplash.com/photo-1589656966895-2f33e7653819?w=400&h=400&fit=crop&crop=face',
+    rarity: CardRarity.RARE_HOLO,
+    type: PokemonType.GRASS,
+    hp: 140,
+    moves: [
+      { name: 'Nature\'s Wrath', damage: 100, energyCost: 4 },
+      { name: 'Bear Hug', damage: 60, energyCost: 2 }
+    ],
+    description: 'A powerful bear that protects the ancient forests. Its strength is legendary among woodland creatures.',
+    flavorText: 'This gentle giant becomes fierce when its territory is threatened.',
+    artist: 'Nature Photographer',
+    cardNumber: '003',
+    setName: 'Animal Kingdom',
+    flippable: true,
+    cardBackTitle: 'Forest Protector',
+    cardBackSubtitle: 'Animal Kingdom Series'
+  },
+};
+
+export const AnimalShowcase: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
       <Card
-        name="Squirtle"
-        imageUrl="https://images.pokemontcg.io/base1/63_hires.png"
+        name="Ocean Dolphin"
+        imageUrl="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=400&fit=crop&crop=face"
         type={PokemonType.WATER}
-        rarity={CardRarity.COMMON}
-        hp={40}
-        maxHp={40}
-        attack={48}
-        defense={65}
+        rarity={CardRarity.UNCOMMON}
+        hp={80}
         moves={[
-          {
-            name: 'Bubble',
-            damage: '10',
-            energyCost: '1',
-            description: 'Flip a coin. If heads, the Defending Pokémon is now Paralyzed.',
-          },
+          { name: 'Splash Wave', damage: 50, energyCost: 2 },
+          { name: 'Sonic Burst', damage: 30, energyCost: 1 }
         ]}
-        description="After birth, its back swells and hardens into a shell. Powerfully sprays foam from its mouth."
-        cardNumber="007"
-        flippable={true}
-        cardBackTitle="Tiny Turtle Pokémon"
-        cardBackSubtitle="Generation I"
-      />
-      <Card
-        name="Charmander"
-        imageUrl="https://images.pokemontcg.io/base1/46_hires.png"
-        type={PokemonType.FIRE}
-        rarity={CardRarity.COMMON}
-        hp={50}
-        maxHp={50}
-        attack={52}
-        defense={43}
-        moves={[
-          {
-            name: 'Scratch',
-            damage: '10',
-            energyCost: '1',
-          },
-          {
-            name: 'Ember',
-            damage: '30',
-            energyCost: '2',
-            description: 'Discard 1 Fire Energy card attached to Charmander.',
-          },
-        ]}
-        description="Obviously prefers hot places. When it rains, steam is said to spout from the tip of its tail."
+        description="An intelligent marine mammal with psychic abilities. Can communicate telepathically."
+        flavorText="Its clicks and whistles can be heard for miles underwater."
+        artist="Marine Photographer"
         cardNumber="004"
+        setName="Animal Kingdom"
         flippable={true}
-        initiallyFlipped={true}
-        cardBackTitle="Lizard Pokémon"
-        cardBackSubtitle="Generation I"
+        cardBackTitle="Ocean Intelligence"
+        cardBackSubtitle="Animal Kingdom Series"
       />
       <Card
-        name="Bulbasaur"
-        imageUrl="https://images.pokemontcg.io/base1/44_hires.png"
-        type={PokemonType.GRASS}
-        rarity={CardRarity.COMMON}
-        hp={40}
-        maxHp={40}
-        attack={49}
-        defense={49}
+        name="Sky Eagle"
+        imageUrl="https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=400&h=400&fit=crop&crop=face"
+        type={PokemonType.FLYING}
+        rarity={CardRarity.RARE}
+        hp={100}
         moves={[
-          {
-            name: 'Leech Seed',
-            damage: '20',
-            energyCost: '2',
-            description: 'Remove 1 damage counter from Bulbasaur.',
-          },
+          { name: 'Aerial Strike', damage: 70, energyCost: 3 },
+          { name: 'Wind Gust', damage: 40, energyCost: 2 }
         ]}
-        description="A strange seed was planted on its back at birth. The plant sprouts and grows with this Pokémon."
-        cardNumber="001"
+        description="A majestic bird of prey with incredible eyesight. Rules the skies with grace and power."
+        flavorText="Can spot prey from over a mile away."
+        artist="Wildlife Photographer"
+        cardNumber="005"
+        setName="Animal Kingdom"
         flippable={true}
-        cardBackTitle="Seed Pokémon"
-        cardBackSubtitle="Generation I"
+        cardBackTitle="Sky Ruler"
+        cardBackSubtitle="Animal Kingdom Series"
+      />
+      <Card
+        name="Arctic Fox"
+        imageUrl="https://images.unsplash.com/photo-1605979399824-6d3de7b6b4b2?w=400&h=400&fit=crop&crop=face"
+        type={PokemonType.ICE}
+        rarity={CardRarity.COMMON}
+        hp={60}
+        moves={[
+          { name: 'Frost Bite', damage: 35, energyCost: 2 },
+          { name: 'Camouflage', damage: 0, energyCost: 1 }
+        ]}
+        description="A cunning fox adapted to harsh winter conditions. Its white fur provides perfect camouflage."
+        flavorText="Changes coat color with the seasons."
+        artist="Arctic Photographer"
+        cardNumber="006"
+        setName="Animal Kingdom"
+        flippable={true}
+        cardBackTitle="Winter Survivor"
+        cardBackSubtitle="Animal Kingdom Series"
       />
     </div>
   ),
   parameters: {
     docs: {
       description: {
-        story: 'Showcase of flip functionality. Click on any card to see its back side. The middle card starts flipped.',
+        story: 'Showcase of various animal-themed cards with larger images. Click on any card to see its back side.',
       },
     },
   },

@@ -200,11 +200,11 @@ const Card: React.FC<CardProps> = ({
           </CardHeader>
 
           <CardBody>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
               <Avatar
                 src={imageUrl}
                 alt={name}
-                size="xl"
+                size="xxl"
                 variant="rounded"
                 rarity={rarity}
               />

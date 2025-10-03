@@ -35,6 +35,10 @@ const sizeStyles = {
     width: 96px;
     height: 96px;
   `,
+  xxl: css`
+    width: 140px;
+    height: 140px;
+  `,
 };
 
 const variantStyles = {
@@ -165,6 +169,10 @@ export const AvatarFallback = styled.div<{ size: AvatarSize }>`
   
   ${props => props.size === 'xl' && css`
     font-size: 18px;
+  `}
+  
+  ${props => props.size === 'xxl' && css`
+    font-size: 24px;
   `}
 `;
 
