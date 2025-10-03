@@ -18,6 +18,16 @@ const glow = keyframes`
   50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4); }
 `;
 
+const cardBackShimmer = keyframes`
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+`;
+
+const pokeBallRotate = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
 // Type colors
 const typeColors = {
   fire: '#FF6B35',
@@ -108,37 +118,101 @@ export const CardBackground = styled.div<{ rarity: CardRarity; type: PokemonType
   z-index: -2;
 `;
 
-export const StyledCard = styled.div<{ 
-  rarity: CardRarity; 
-  type: PokemonType; 
-  clickable: boolean;
-}>`
+// Flip container for 3D flip effect
+export const FlipContainer = styled.div<{ isFlipped: boolean; clickable: boolean }>`
   position: relative;
   width: 280px;
   height: 400px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  perspective: 1000px;
+  transition: transform 0.3s ease;
+
+  ${props => props.clickable && css`
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-4px);
+    }
+
+    &:active {
+      transform: translateY(-2px);
+    }
+  `}
+`;
+
+export const FlipInner = styled.div<{ isFlipped: boolean }>`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+  transform: ${props => props.isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'};
+`;
+
+export const CardFace = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
   border-radius: 16px;
+  overflow: hidden;
+`;
+
+export const StyledCard = styled(CardFace)<{ 
+  rarity: CardRarity; 
+  type: PokemonType; 
+}>`
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
   border: 1px solid #e0e0e0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   padding: 16px;
-  transition: all 0.3s ease;
-  overflow: hidden;
-  
+
   ${props => rarityEffects[props.rarity]}
-  
-  ${props => props.clickable && css`
-    cursor: pointer;
-    
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    }
-    
-    &:active {
-      transform: translateY(-2px);
-    }
+`;
+
+export const CardBack = styled(CardFace)<{ 
+  rarity: CardRarity; 
+  type: PokemonType; 
+}>`
+  background: linear-gradient(135deg, #1a237e 0%, #3949ab 50%, #1a237e 100%);
+  border: 2px solid #ffd700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: rotateY(180deg);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    animation: ${cardBackShimmer} 3s infinite;
+  }
+
+  ${props => props.rarity === 'ultra-rare' && css`
+    border-color: #ff6b35;
+    background: linear-gradient(135deg, #ff6b35 0%, #ff8e53 50%, #ff6b35 100%);
+  `}
+
+  ${props => props.rarity === 'secret-rare' && css`
+    border-color: #9c27b0;
+    background: linear-gradient(135deg, #9c27b0 0%, #e91e63 25%, #2196f3 50%, #4caf50 75%, #9c27b0 100%);
+    background-size: 400% 400%;
+    animation: ${holographic} 3s infinite;
   `}
 `;
 
@@ -199,4 +273,70 @@ export const RaritySection = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+`;
+
+// Card Back Elements
+export const PokeBall = styled.div`
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #ff0000 0%, #ff0000 45%, #000000 45%, #000000 55%, #ffffff 55%, #ffffff 100%);
+  border: 4px solid #333;
+  position: relative;
+  margin-bottom: 20px;
+  animation: ${pokeBallRotate} 4s linear infinite;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    background: #333;
+    border-radius: 50%;
+    border: 3px solid #fff;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #333;
+    transform: translateY(-50%);
+  }
+`;
+
+export const CardBackTitle = styled.h2`
+  color: #ffd700;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-family: 'Arial', sans-serif;
+`;
+
+export const CardBackSubtitle = styled.p`
+  color: #ffffff;
+  font-size: 14px;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  opacity: 0.9;
+`;
+
+export const CardBackPattern = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 2px, transparent 2px);
+  background-size: 40px 40px;
+  z-index: -1;
 `;

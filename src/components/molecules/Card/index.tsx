@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '../../atoms/Avatar';
 import Badge from '../../atoms/Badge';
 import ProgressBar from '../../atoms/ProgressBar';
 import Divider from '../../atoms/Divider';
 import { 
+  FlipContainer,
+  FlipInner,
   StyledCard, 
+  CardBack,
   CardHeader, 
   CardBody, 
   CardFooter,
@@ -14,7 +17,11 @@ import {
   MovesSection,
   Move,
   RaritySection,
-  CardBackground
+  CardBackground,
+  PokeBall,
+  CardBackTitle,
+  CardBackSubtitle,
+  CardBackPattern
 } from './styles';
 
 export type CardRarity = 'common' | 'uncommon' | 'rare' | 'ultra-rare' | 'secret-rare';
@@ -49,23 +56,23 @@ export interface CardProps {
    */
   hp: number;
   /**
-   * Maximum HP
+   * Maximum HP (defaults to current HP if not provided)
    */
   maxHp?: number;
   /**
-   * Attack power
+   * Attack stat
    */
   attack?: number;
   /**
-   * Defense power
+   * Defense stat
    */
   defense?: number;
   /**
-   * Pokemon moves/attacks
+   * Pokemon moves
    */
   moves?: MoveData[];
   /**
-   * Card description or flavor text
+   * Pokemon description
    */
   description?: string;
   /**
@@ -77,13 +84,33 @@ export interface CardProps {
    */
   clickable?: boolean;
   /**
-   * Additional CSS class name
+   * Whether the card can be flipped
+   */
+  flippable?: boolean;
+  /**
+   * Whether the card starts flipped
+   */
+  initiallyFlipped?: boolean;
+  /**
+   * Custom card back title
+   */
+  cardBackTitle?: string;
+  /**
+   * Custom card back subtitle
+   */
+  cardBackSubtitle?: string;
+  /**
+   * Additional CSS class
    */
   className?: string;
   /**
    * Click handler
    */
   onClick?: () => void;
+  /**
+   * Flip handler
+   */
+  onFlip?: (isFlipped: boolean) => void;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -99,134 +126,161 @@ const Card: React.FC<CardProps> = ({
   description,
   cardNumber,
   clickable = false,
+  flippable = false,
+  initiallyFlipped = false,
+  cardBackTitle = "Pokémon TCG",
+  cardBackSubtitle = "Trading Card Game",
   className,
   onClick,
+  onFlip,
   ...props
 }) => {
+  const [isFlipped, setIsFlipped] = useState(initiallyFlipped);
   const displayMaxHp = maxHp || hp;
 
+  const handleCardClick = () => {
+    if (flippable) {
+      const newFlippedState = !isFlipped;
+      setIsFlipped(newFlippedState);
+      onFlip?.(newFlippedState);
+    }
+    onClick?.();
+  };
+
   return (
-    <StyledCard
-      rarity={rarity}
-      type={type}
-      clickable={clickable || !!onClick}
+    <FlipContainer
+      isFlipped={isFlipped}
+      clickable={clickable || flippable || !!onClick}
       className={className}
-      onClick={onClick}
+      onClick={handleCardClick}
       {...props}
     >
-      <CardBackground rarity={rarity} type={type} />
-      
-      <CardHeader>
-        <div>
-          <CardTitle>{name}</CardTitle>
-          <CardSubtitle>
-            <Badge variant={type} size="small">{type}</Badge>
-          </CardSubtitle>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#666' }}>HP</span>
-          <Badge variant={type} size="medium">{hp}</Badge>
-        </div>
-      </CardHeader>
-
-      <CardBody>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-          <Avatar
-            src={imageUrl}
-            alt={name}
-            size="xl"
-            variant="rounded"
-            rarity={rarity}
-          />
-        </div>
-
-        {(attack !== undefined || defense !== undefined) && (
-          <>
-            <Divider variant="gradient">Stats</Divider>
-            <StatsSection>
-              <div style={{ marginBottom: '8px' }}>
-                <ProgressBar
-                  value={hp}
-                  max={displayMaxHp}
-                  variant="hp"
-                  size="medium"
-                  label={`${hp}/${displayMaxHp} HP`}
-                />
-              </div>
-              {attack !== undefined && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '12px', color: '#666' }}>Attack:</span>
-                  <Badge variant={type} size="small">{attack}</Badge>
-                </div>
-              )}
-              {defense !== undefined && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '12px', color: '#666' }}>Defense:</span>
-                  <Badge variant={type} size="small">{defense}</Badge>
-                </div>
-              )}
-            </StatsSection>
-          </>
-        )}
-
-        {moves.length > 0 && (
-          <>
-            <Divider>Moves</Divider>
-            <MovesSection>
-              {moves.map((move, index) => (
-                <Move key={index}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                    <span style={{ fontWeight: 'bold', fontSize: '12px' }}>{move.name}</span>
-                    {move.damage && (
-                      <Badge variant={type} size="small">{move.damage}</Badge>
-                    )}
-                  </div>
-                  {move.energyCost && (
-                    <div style={{ fontSize: '10px', color: '#666', marginBottom: '2px' }}>
-                      Energy Cost: {move.energyCost}
-                    </div>
-                  )}
-                  {move.description && (
-                    <div style={{ fontSize: '10px', color: '#666', fontStyle: 'italic' }}>
-                      {move.description}
-                    </div>
-                  )}
-                </Move>
-              ))}
-            </MovesSection>
-          </>
-        )}
-
-        {description && (
-          <>
-            <Divider variant="decorative" />
-            <div style={{ 
-              fontSize: '11px', 
-              color: '#666', 
-              fontStyle: 'italic', 
-              textAlign: 'center',
-              lineHeight: '1.4',
-              margin: '12px 0'
-            }}>
-              {description}
+      <FlipInner isFlipped={isFlipped}>
+        {/* Card Front */}
+        <StyledCard rarity={rarity} type={type}>
+          <CardBackground rarity={rarity} type={type} />
+          
+          <CardHeader>
+            <div>
+              <CardTitle>{name}</CardTitle>
+              <CardSubtitle>
+                <Badge variant={type} size="small">{type}</Badge>
+              </CardSubtitle>
             </div>
-          </>
-        )}
-      </CardBody>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#666' }}>HP</span>
+              <Badge variant={type} size="medium">{hp}</Badge>
+            </div>
+          </CardHeader>
 
-      <CardFooter>
-        <RaritySection>
-          <Badge variant={type} rarity={rarity} size="small">
-            {rarity.replace('-', ' ')}
-          </Badge>
-          {cardNumber && (
-            <span style={{ fontSize: '10px', color: '#666' }}>
-              #{cardNumber}
-            </span>
-          )}
-        </RaritySection>
-      </CardFooter>
-    </StyledCard>
+          <CardBody>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+              <Avatar
+                src={imageUrl}
+                alt={name}
+                size="xl"
+                variant="rounded"
+                rarity={rarity}
+              />
+            </div>
+
+            {(attack !== undefined || defense !== undefined) && (
+              <>
+                <Divider variant="gradient">Stats</Divider>
+                <StatsSection>
+                  <div style={{ marginBottom: '8px' }}>
+                    <ProgressBar
+                      value={hp}
+                      max={displayMaxHp}
+                      variant="hp"
+                      size="medium"
+                      label={`${hp}/${displayMaxHp} HP`}
+                    />
+                  </div>
+                  {attack !== undefined && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                      <span style={{ fontSize: '12px', color: '#666' }}>Attack:</span>
+                      <Badge variant={type} size="small">{attack}</Badge>
+                    </div>
+                  )}
+                  {defense !== undefined && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '12px', color: '#666' }}>Defense:</span>
+                      <Badge variant={type} size="small">{defense}</Badge>
+                    </div>
+                  )}
+                </StatsSection>
+              </>
+            )}
+
+            {moves.length > 0 && (
+              <>
+                <Divider>Moves</Divider>
+                <MovesSection>
+                  {moves.map((move, index) => (
+                    <Move key={index}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '12px' }}>{move.name}</span>
+                        {move.damage && (
+                          <Badge variant={type} size="small">{move.damage}</Badge>
+                        )}
+                      </div>
+                      {move.energyCost && (
+                        <div style={{ fontSize: '10px', color: '#666', marginBottom: '2px' }}>
+                          Energy Cost: {move.energyCost}
+                        </div>
+                      )}
+                      {move.description && (
+                        <div style={{ fontSize: '10px', color: '#666', fontStyle: 'italic' }}>
+                          {move.description}
+                        </div>
+                      )}
+                    </Move>
+                  ))}
+                </MovesSection>
+              </>
+            )}
+
+            {description && (
+              <>
+                <Divider variant="decorative" />
+                <div style={{ 
+                  fontSize: '11px', 
+                  color: '#666', 
+                  fontStyle: 'italic', 
+                  textAlign: 'center',
+                  lineHeight: '1.4',
+                  margin: '12px 0'
+                }}>
+                  {description}
+                </div>
+              </>
+            )}
+          </CardBody>
+
+          <CardFooter>
+            <RaritySection>
+              <Badge variant={type} rarity={rarity} size="small">
+                {rarity.replace('-', ' ')}
+              </Badge>
+              {cardNumber && (
+                <span style={{ fontSize: '10px', color: '#666' }}>
+                  #{cardNumber}
+                </span>
+              )}
+            </RaritySection>
+          </CardFooter>
+      </StyledCard>
+
+      {/* Card Back */}
+      <CardBack rarity={rarity} type={type}>
+        <CardBackPattern />
+        <PokeBall />
+        <CardBackTitle>{cardBackTitle}</CardBackTitle>
+        <CardBackSubtitle>{cardBackSubtitle}</CardBackSubtitle>
+      </CardBack>
+    </FlipInner>
+  </FlipContainer>
   );
 };
 
