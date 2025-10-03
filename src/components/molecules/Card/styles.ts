@@ -139,10 +139,9 @@ export const CardBackground = styled.div<{ rarity: CardRarity; type: PokemonType
 
 // Flip container for 3D flip effect
 export const HolographicOverlay = styled.div<{
-  isHovering: boolean;
+  isClickHolding: boolean;
   mousePosition?: { x: number; y: number };
   rarity?: string;
-  isDragging?: boolean;
 }>`
   position: absolute;
   top: 0;
@@ -151,60 +150,60 @@ export const HolographicOverlay = styled.div<{
   bottom: 0;
   border-radius: 16px;
   pointer-events: none;
-  opacity: ${props => (props.isHovering || props.isDragging) ? 1 : 0};
-  transition: ${props => props.isDragging ? 'none' : 'opacity 0.3s ease'};
+  opacity: ${props => props.isClickHolding ? 1 : 0};
+  transition: ${props => props.isClickHolding ? 'none' : 'opacity 0.3s ease'};
   z-index: 10;
   
   background: ${props => {
-    if ((!props.isHovering && !props.isDragging) || !props.mousePosition) return 'transparent';
+    if (!props.isClickHolding || !props.mousePosition) return 'transparent';
     
     const { x, y } = props.mousePosition;
-    const centerX = 50 + (x * 30); // Shift gradient center based on mouse
-    const centerY = 50 + (y * 30);
+    const centerX = 50 + (x * 40); // Enhanced gradient shift for click-hold
+    const centerY = 50 + (y * 40);
     
-    // Enhance effects when dragging
-    const intensityMultiplier = props.isDragging ? 1.5 : 1;
+    // Enhanced intensity for click-hold effect
+    const intensityMultiplier = 2;
     
     // Different holographic effects based on rarity
     if (props.rarity === 'legendary' || props.rarity === 'mythic') {
       return `
         radial-gradient(
           circle at ${centerX}% ${centerY}%, 
-          rgba(255, 215, 0, ${0.4 * intensityMultiplier}) 0%,
-          rgba(255, 105, 180, ${0.3 * intensityMultiplier}) 25%,
-          rgba(138, 43, 226, ${0.3 * intensityMultiplier}) 50%,
-          rgba(0, 191, 255, ${0.2 * intensityMultiplier}) 75%,
+          rgba(255, 215, 0, ${0.5 * intensityMultiplier}) 0%,
+          rgba(255, 105, 180, ${0.4 * intensityMultiplier}) 25%,
+          rgba(138, 43, 226, ${0.4 * intensityMultiplier}) 50%,
+          rgba(0, 191, 255, ${0.3 * intensityMultiplier}) 75%,
           transparent 100%
         ),
         linear-gradient(
-          ${45 + (x * 90)}deg,
-          transparent 30%,
-          rgba(255, 255, 255, ${0.6 * intensityMultiplier}) 50%,
-          transparent 70%
+          ${45 + (x * 120)}deg,
+          transparent 20%,
+          rgba(255, 255, 255, ${0.8 * intensityMultiplier}) 50%,
+          transparent 80%
         )
       `;
     } else if (props.rarity === 'rare') {
       return `
         radial-gradient(
           circle at ${centerX}% ${centerY}%, 
-          rgba(0, 191, 255, ${0.3 * intensityMultiplier}) 0%,
-          rgba(138, 43, 226, ${0.2 * intensityMultiplier}) 50%,
+          rgba(0, 191, 255, ${0.4 * intensityMultiplier}) 0%,
+          rgba(138, 43, 226, ${0.3 * intensityMultiplier}) 50%,
           transparent 100%
         ),
         linear-gradient(
-          ${45 + (x * 60)}deg,
-          transparent 40%,
-          rgba(255, 255, 255, ${0.4 * intensityMultiplier}) 50%,
-          transparent 60%
+          ${45 + (x * 80)}deg,
+          transparent 30%,
+          rgba(255, 255, 255, ${0.6 * intensityMultiplier}) 50%,
+          transparent 70%
         )
       `;
     } else {
       return `
         linear-gradient(
-          ${45 + (x * 45)}deg,
-          transparent 45%,
-          rgba(255, 255, 255, ${0.2 * intensityMultiplier}) 50%,
-          transparent 55%
+          ${45 + (x * 60)}deg,
+          transparent 40%,
+          rgba(255, 255, 255, ${0.3 * intensityMultiplier}) 50%,
+          transparent 60%
         )
       `;
     }
@@ -237,57 +236,44 @@ export const HolographicOverlay = styled.div<{
 export const FlipContainer = styled.div<{ 
   isFlipped: boolean; 
   clickable: boolean;
-  isHovering?: boolean;
+  isClickHolding?: boolean;
   mousePosition?: { x: number; y: number };
-  isDragging?: boolean;
-  dragPosition?: { x: number; y: number };
 }>`
   position: relative;
   width: 280px;
   height: 450px;
   perspective: 1000px;
-  transition: ${props => props.isDragging ? 'none' : 'transform 0.1s ease-out'};
+  transition: ${props => props.isClickHolding ? 'none' : 'transform 0.3s ease-out'};
   transform: ${props => {
-    // Base position from dragging
-    const baseTranslate = props.isDragging && props.dragPosition 
-      ? `translate(${props.dragPosition.x}px, ${props.dragPosition.y}px)` 
-      : 'translate(0, 0)';
-    
     // Holographic rotation effects
-    let holoRotation = '';
-    if (props.isHovering && props.mousePosition) {
+    if (props.isClickHolding && props.mousePosition) {
       const { x, y } = props.mousePosition;
       const rotateY = x * 15; // Max 15 degrees rotation
-      const rotateX = -y * 10; // Max 10 degrees rotation (negative for natural feel)
-      holoRotation = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    } else {
-      holoRotation = 'rotateX(0deg) rotateY(0deg)';
+      const rotateX = -y * 15; // Max 15 degrees rotation (negative for natural feel)
+      const translateY = -12; // Enhanced lift effect
+      const scale = 1.05; // Enhanced scale
+      
+      return `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(${translateY}px) scale(${scale})`;
     }
     
-    // Hover lift effect
-    const translateY = props.isHovering && !props.isDragging ? -8 : 0;
-    
-    // Scale effect when dragging
-    const scale = props.isDragging ? 'scale(1.05)' : 'scale(1)';
-    
-    return `${baseTranslate} ${holoRotation} translateY(${translateY}px) ${scale}`;
+    return 'none';
   }};
-  z-index: ${props => props.isDragging ? 1000 : 'auto'};
+  z-index: ${props => props.isClickHolding ? 1000 : 'auto'};
   user-select: none;
 
   ${props => props.clickable && css`
-    cursor: ${props.isDragging ? 'grabbing' : 'grab'};
+    cursor: pointer;
 
     &:hover {
-      cursor: ${props.isDragging ? 'grabbing' : 'grab'};
+      cursor: pointer;
     }
 
     &:active {
-      cursor: grabbing;
+      cursor: pointer;
     }
   `}
 
-  ${props => props.isDragging && css`
+  ${props => props.isClickHolding && css`
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     z-index: 1000;
   `}
