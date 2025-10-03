@@ -119,14 +119,27 @@ export const CardBackground = styled.div<{ rarity: CardRarity; type: PokemonType
 `;
 
 // Flip container for 3D flip effect
-export const FlipContainer = styled.div<{ isFlipped: boolean; clickable: boolean }>`
+export const FlipContainer = styled.div<{ 
+  isFlipped: boolean; 
+  clickable: boolean;
+  isDragging?: boolean;
+  dragPosition?: { x: number; y: number };
+}>`
   position: relative;
   width: 280px;
   height: 450px;
   perspective: 1000px;
-  transition: transform 0.3s ease;
+  transition: ${props => props.isDragging ? 'none' : 'transform 0.3s ease'};
+  transform: ${props => {
+    const baseTransform = props.isDragging && props.dragPosition 
+      ? `translate(${props.dragPosition.x}px, ${props.dragPosition.y}px)` 
+      : 'translate(0, 0)';
+    return baseTransform;
+  }};
+  z-index: ${props => props.isDragging ? 1000 : 'auto'};
+  user-select: none;
 
-  ${props => props.clickable && css`
+  ${props => props.clickable && !props.isDragging && css`
     cursor: pointer;
 
     &:hover {
@@ -135,6 +148,21 @@ export const FlipContainer = styled.div<{ isFlipped: boolean; clickable: boolean
 
     &:active {
       transform: translateY(-2px);
+    }
+  `}
+
+  ${props => props.isDragging && css`
+    cursor: grabbing;
+    transform: ${props.dragPosition 
+      ? `translate(${props.dragPosition.x}px, ${props.dragPosition.y}px) scale(1.05)` 
+      : 'scale(1.05)'};
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+  `}
+
+  ${props => props.clickable && !props.isDragging && css`
+    &:hover {
+      cursor: grab;
     }
   `}
 `;

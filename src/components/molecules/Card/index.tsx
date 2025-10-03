@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import Avatar from '../../atoms/Avatar';
-import Badge from '../../atoms/Badge';
 import ProgressBar from '../../atoms/ProgressBar';
+import Badge from '../../atoms/Badge';
 import Divider from '../../atoms/Divider';
-import { 
+import {
   FlipContainer,
   FlipInner,
-  StyledCard, 
+  StyledCard,
   CardBack,
-  CardHeader, 
-  CardBody, 
-  CardFooter,
+  CardHeader,
   CardTitle,
   CardSubtitle,
+  CardBody,
   StatsSection,
   MovesSection,
   Move,
+  CardFooter,
   RaritySection,
-  CardBackground,
   PokeBall,
   CardBackTitle,
   CardBackSubtitle,
-  CardBackPattern
+  CardBackPattern,
+  CardBackground,
 } from './styles';
 
 export enum CardRarity {
@@ -162,23 +162,77 @@ const Card: React.FC<CardProps> = ({
   ...props
 }) => {
   const [isFlipped, setIsFlipped] = useState(initiallyFlipped);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const cardRef = useRef<HTMLDivElement>(null);
   const displayMaxHp = maxHp || hp;
 
   const handleCardClick = () => {
-    if (flippable) {
+    if (flippable && !isDragging) {
       const newFlippedState = !isFlipped;
       setIsFlipped(newFlippedState);
       onFlip?.(newFlippedState);
     }
-    onClick?.();
+    if (!isDragging) {
+      onClick?.();
+    }
   };
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    
+    const rect = cardRef.current.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
+    
+    setDragOffset({ x: offsetX, y: offsetY });
+    setIsDragging(true);
+    
+    // Prevent text selection during drag
+    e.preventDefault();
+  }, []);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging) return;
+    
+    const newX = e.clientX - dragOffset.x;
+    const newY = e.clientY - dragOffset.y;
+    
+    setDragPosition({ x: newX, y: newY });
+  }, [isDragging, dragOffset]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+    // Reset position after a short delay for smooth transition
+    setTimeout(() => {
+      setDragPosition({ x: 0, y: 0 });
+    }, 100);
+  }, []);
+
+  // Add global mouse event listeners when dragging
+  React.useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
     <FlipContainer
+      ref={cardRef}
       isFlipped={isFlipped}
       clickable={clickable || flippable || !!onClick}
       className={className}
       onClick={handleCardClick}
+      onMouseDown={handleMouseDown}
+      isDragging={isDragging}
+      dragPosition={dragPosition}
       {...props}
     >
       <FlipInner isFlipped={isFlipped}>
