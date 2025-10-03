@@ -248,8 +248,12 @@ export const FlipContainer = styled.div<{
     // Holographic rotation effects
     if (props.isClickHolding && props.mousePosition) {
       const { x, y } = props.mousePosition;
-      const rotateY = x * 15; // Max 15 degrees rotation
-      const rotateX = -y * 15; // Max 15 degrees rotation (negative for natural feel)
+      
+      // Apply limits to prevent excessive flipping
+      const maxRotation = 8; // Reduced from 15 to 8 degrees for more subtle effect
+      const rotateY = Math.max(-maxRotation, Math.min(maxRotation, x * maxRotation));
+      const rotateX = Math.max(-maxRotation, Math.min(maxRotation, -y * maxRotation));
+      
       const translateY = -12; // Enhanced lift effect
       const scale = 1.05; // Enhanced scale
       
