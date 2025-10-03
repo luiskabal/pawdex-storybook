@@ -1,9 +1,9 @@
 {
-  "name": "@pawdex/ui-library",
-  "version": "1.0.0",
+  "name": "pawdex-storybook",
+  "version": "1.0.1",
   "description": "A React UI library built with Atomic Design principles and Material UI",
   "main": "dist/index.js",
-  "module": "dist/index.es.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
