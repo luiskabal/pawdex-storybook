@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import Avatar from '../../atoms/Avatar';
 import ProgressBar from '../../atoms/ProgressBar';
 import Badge from '../../atoms/Badge';
@@ -163,12 +163,20 @@ const Card: React.FC<CardProps> = ({
   ...props
 }) => {
   const [isFlipped, setIsFlipped] = useState(initiallyFlipped);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  // Holographic effect states
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
+  
+  // Drag states
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragPosition, setDragPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [dragOffset, setDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const cardRef = useRef<HTMLDivElement>(null);
   const displayMaxHp = maxHp || hp;
 
   const handleCardClick = () => {
+    if (isDragging) return;
+    
     if (flippable) {
       const newFlippedState = !isFlipped;
       setIsFlipped(newFlippedState);
@@ -177,18 +185,15 @@ const Card: React.FC<CardProps> = ({
     onClick?.();
   };
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+  // Combined holographic and drag handlers
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     
     const rect = cardRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+    const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+    const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
     
-    // Calculate mouse position relative to card center (-1 to 1)
-    const x = (e.clientX - centerX) / (rect.width / 2);
-    const y = (e.clientY - centerY) / (rect.height / 2);
-    
-    setMousePosition({ x, y });
+    setMousePosition({ x: Math.max(-1, Math.min(1, x)), y: Math.max(-1, Math.min(1, y)) });
   }, []);
 
   const handleMouseEnter = useCallback(() => {
@@ -200,7 +205,49 @@ const Card: React.FC<CardProps> = ({
     setMousePosition({ x: 0, y: 0 });
   }, []);
 
-  return (
+  // Drag handlers
+  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    
+    const rect = cardRef.current.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
+    
+    setIsDragging(true);
+    setDragOffset({ x: offsetX, y: offsetY });
+    e.preventDefault();
+  }, []);
+
+  const handleGlobalMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging) return;
+    
+    const newX = e.clientX - dragOffset.x;
+    const newY = e.clientY - dragOffset.y;
+    
+    setDragPosition({ x: newX, y: newY });
+  }, [isDragging, dragOffset]);
+
+  const handleGlobalMouseUp = useCallback(() => {
+     if (isDragging) {
+       setIsDragging(false);
+       setDragPosition({ x: 0, y: 0 });
+     }
+   }, [isDragging]);
+
+   // Global mouse events for dragging
+   useEffect(() => {
+     if (isDragging) {
+       document.addEventListener('mousemove', handleGlobalMouseMove);
+       document.addEventListener('mouseup', handleGlobalMouseUp);
+       
+       return () => {
+         document.removeEventListener('mousemove', handleGlobalMouseMove);
+         document.removeEventListener('mouseup', handleGlobalMouseUp);
+       };
+     }
+   }, [isDragging, handleGlobalMouseMove, handleGlobalMouseUp]);
+
+   return (
     <FlipContainer
       ref={cardRef}
       isFlipped={isFlipped}
@@ -210,15 +257,19 @@ const Card: React.FC<CardProps> = ({
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onMouseDown={handleMouseDown}
       isHovering={isHovering}
       mousePosition={mousePosition}
+      isDragging={isDragging}
+      dragPosition={dragPosition}
       {...props}
     >
       <HolographicOverlay
-        isHovering={isHovering}
-        mousePosition={mousePosition}
-        rarity={rarity}
-      />
+          isHovering={isHovering}
+          mousePosition={mousePosition}
+          rarity={rarity}
+          isDragging={isDragging}
+        />
       <FlipInner isFlipped={isFlipped}>
         {/* Card Front */}
         <StyledCard rarity={rarity} type={type}>
