@@ -22,6 +22,7 @@ import {
   CardBackSubtitle,
   CardBackPattern,
   CardBackground,
+  HolographicOverlay,
 } from './styles';
 
 export enum CardRarity {
@@ -162,66 +163,42 @@ const Card: React.FC<CardProps> = ({
   ...props
 }) => {
   const [isFlipped, setIsFlipped] = useState(initiallyFlipped);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const displayMaxHp = maxHp || hp;
 
   const handleCardClick = () => {
-    if (flippable && !isDragging) {
+    if (flippable) {
       const newFlippedState = !isFlipped;
       setIsFlipped(newFlippedState);
       onFlip?.(newFlippedState);
     }
-    if (!isDragging) {
-      onClick?.();
-    }
+    onClick?.();
   };
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!cardRef.current) return;
     
     const rect = cardRef.current.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left;
-    const offsetY = e.clientY - rect.top;
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
     
-    setDragOffset({ x: offsetX, y: offsetY });
-    setIsDragging(true);
+    // Calculate mouse position relative to card center (-1 to 1)
+    const x = (e.clientX - centerX) / (rect.width / 2);
+    const y = (e.clientY - centerY) / (rect.height / 2);
     
-    // Prevent text selection during drag
-    e.preventDefault();
+    setMousePosition({ x, y });
   }, []);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging) return;
-    
-    const newX = e.clientX - dragOffset.x;
-    const newY = e.clientY - dragOffset.y;
-    
-    setDragPosition({ x: newX, y: newY });
-  }, [isDragging, dragOffset]);
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-    // Reset position after a short delay for smooth transition
-    setTimeout(() => {
-      setDragPosition({ x: 0, y: 0 });
-    }, 100);
+  const handleMouseEnter = useCallback(() => {
+    setIsHovering(true);
   }, []);
 
-  // Add global mouse event listeners when dragging
-  React.useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  const handleMouseLeave = useCallback(() => {
+    setIsHovering(false);
+    setMousePosition({ x: 0, y: 0 });
+  }, []);
 
   return (
     <FlipContainer
@@ -230,11 +207,18 @@ const Card: React.FC<CardProps> = ({
       clickable={clickable || flippable || !!onClick}
       className={className}
       onClick={handleCardClick}
-      onMouseDown={handleMouseDown}
-      isDragging={isDragging}
-      dragPosition={dragPosition}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      isHovering={isHovering}
+      mousePosition={mousePosition}
       {...props}
     >
+      <HolographicOverlay
+        isHovering={isHovering}
+        mousePosition={mousePosition}
+        rarity={rarity}
+      />
       <FlipInner isFlipped={isFlipped}>
         {/* Card Front */}
         <StyledCard rarity={rarity} type={type}>

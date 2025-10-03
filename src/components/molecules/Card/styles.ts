@@ -13,6 +13,25 @@ const holographic = keyframes`
   100% { background-position: 0% 50%; }
 `;
 
+const holoShimmer = keyframes`
+  0% { 
+    background-position: -200% 0;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% { 
+    background-position: 200% 0;
+    opacity: 0;
+  }
+`;
+
+const rainbowShift = keyframes`
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+`;
+
 const glow = keyframes`
   0%, 100% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.3); }
   50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4); }
@@ -119,50 +138,136 @@ export const CardBackground = styled.div<{ rarity: CardRarity; type: PokemonType
 `;
 
 // Flip container for 3D flip effect
+export const HolographicOverlay = styled.div<{
+  isHovering: boolean;
+  mousePosition?: { x: number; y: number };
+  rarity?: string;
+}>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  pointer-events: none;
+  opacity: ${props => props.isHovering ? 1 : 0};
+  transition: opacity 0.3s ease;
+  z-index: 10;
+  
+  background: ${props => {
+    if (!props.isHovering || !props.mousePosition) return 'transparent';
+    
+    const { x, y } = props.mousePosition;
+    const centerX = 50 + (x * 30); // Shift gradient center based on mouse
+    const centerY = 50 + (y * 30);
+    
+    // Different holographic effects based on rarity
+    if (props.rarity === 'legendary' || props.rarity === 'mythic') {
+      return `
+        radial-gradient(
+          circle at ${centerX}% ${centerY}%, 
+          rgba(255, 215, 0, 0.4) 0%,
+          rgba(255, 105, 180, 0.3) 25%,
+          rgba(138, 43, 226, 0.3) 50%,
+          rgba(0, 191, 255, 0.2) 75%,
+          transparent 100%
+        ),
+        linear-gradient(
+          ${45 + (x * 90)}deg,
+          transparent 30%,
+          rgba(255, 255, 255, 0.6) 50%,
+          transparent 70%
+        )
+      `;
+    } else if (props.rarity === 'rare') {
+      return `
+        radial-gradient(
+          circle at ${centerX}% ${centerY}%, 
+          rgba(0, 191, 255, 0.3) 0%,
+          rgba(138, 43, 226, 0.2) 50%,
+          transparent 100%
+        ),
+        linear-gradient(
+          ${45 + (x * 60)}deg,
+          transparent 40%,
+          rgba(255, 255, 255, 0.4) 50%,
+          transparent 60%
+        )
+      `;
+    } else {
+      return `
+        linear-gradient(
+          ${45 + (x * 45)}deg,
+          transparent 45%,
+          rgba(255, 255, 255, 0.2) 50%,
+          transparent 55%
+        )
+      `;
+    }
+  }};
+  
+  ${props => props.isHovering && (props.rarity === 'legendary' || props.rarity === 'mythic') && css`
+    animation: ${rainbowShift} 3s linear infinite;
+  `}
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 16px;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.8) 50%,
+      transparent 70%
+    );
+    background-size: 200% 200%;
+    animation: ${props => props.isHovering ? css`${holoShimmer} 2s ease-in-out infinite` : 'none'};
+    opacity: ${props => props.isHovering ? 0.6 : 0};
+  }
+`;
+
 export const FlipContainer = styled.div<{ 
   isFlipped: boolean; 
   clickable: boolean;
-  isDragging?: boolean;
-  dragPosition?: { x: number; y: number };
+  isHovering?: boolean;
+  mousePosition?: { x: number; y: number };
 }>`
   position: relative;
   width: 280px;
   height: 450px;
   perspective: 1000px;
-  transition: ${props => props.isDragging ? 'none' : 'transform 0.3s ease'};
+  transition: transform 0.1s ease-out;
   transform: ${props => {
-    const baseTransform = props.isDragging && props.dragPosition 
-      ? `translate(${props.dragPosition.x}px, ${props.dragPosition.y}px)` 
-      : 'translate(0, 0)';
-    return baseTransform;
+    if (!props.isHovering || !props.mousePosition) {
+      return 'rotateX(0deg) rotateY(0deg) translateY(0px)';
+    }
+    
+    const { x, y } = props.mousePosition;
+    const rotateY = x * 15; // Max 15 degrees rotation
+    const rotateX = -y * 10; // Max 10 degrees rotation (negative for natural feel)
+    const translateY = props.isHovering ? -8 : 0;
+    
+    return `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(${translateY}px)`;
   }};
-  z-index: ${props => props.isDragging ? 1000 : 'auto'};
   user-select: none;
 
-  ${props => props.clickable && !props.isDragging && css`
+  ${props => props.clickable && css`
     cursor: pointer;
 
     &:hover {
-      transform: translateY(-4px);
+      transform: ${props.isHovering && props.mousePosition 
+        ? `rotateX(${-props.mousePosition.y * 10}deg) rotateY(${props.mousePosition.x * 15}deg) translateY(-8px)`
+        : 'translateY(-4px)'};
     }
 
     &:active {
-      transform: translateY(-2px);
-    }
-  `}
-
-  ${props => props.isDragging && css`
-    cursor: grabbing;
-    transform: ${props.dragPosition 
-      ? `translate(${props.dragPosition.x}px, ${props.dragPosition.y}px) scale(1.05)` 
-      : 'scale(1.05)'};
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-  `}
-
-  ${props => props.clickable && !props.isDragging && css`
-    &:hover {
-      cursor: grab;
+      transform: ${props.isHovering && props.mousePosition 
+        ? `rotateX(${-props.mousePosition.y * 10}deg) rotateY(${props.mousePosition.x * 15}deg) translateY(-6px) scale(0.98)`
+        : 'translateY(-2px) scale(0.98)'};
     }
   `}
 `;
