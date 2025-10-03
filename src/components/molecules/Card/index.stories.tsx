@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Card } from './index';
-import { CardRarity, PokemonType } from './index';
+import Card, { CardRarity, PokemonType } from './index';
 
 const meta: Meta<typeof Card> = {
   title: 'Molecules/Card',

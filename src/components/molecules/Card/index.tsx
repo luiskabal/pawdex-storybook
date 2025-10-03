@@ -24,8 +24,34 @@ import {
   CardBackPattern
 } from './styles';
 
-export type CardRarity = 'common' | 'uncommon' | 'rare' | 'ultra-rare' | 'secret-rare';
-export type PokemonType = 'fire' | 'water' | 'grass' | 'electric' | 'psychic' | 'ice' | 'dragon' | 'dark' | 'fighting' | 'poison' | 'ground' | 'flying' | 'bug' | 'rock' | 'ghost' | 'steel' | 'fairy' | 'normal';
+export enum CardRarity {
+  COMMON = 'common',
+  UNCOMMON = 'uncommon',
+  RARE = 'rare',
+  RARE_HOLO = 'ultra-rare',
+  SECRET_RARE = 'secret-rare',
+}
+
+export enum PokemonType {
+  FIRE = 'fire',
+  WATER = 'water',
+  GRASS = 'grass',
+  ELECTRIC = 'electric',
+  PSYCHIC = 'psychic',
+  ICE = 'ice',
+  DRAGON = 'dragon',
+  DARK = 'dark',
+  FIGHTING = 'fighting',
+  POISON = 'poison',
+  GROUND = 'ground',
+  FLYING = 'flying',
+  BUG = 'bug',
+  ROCK = 'rock',
+  GHOST = 'ghost',
+  STEEL = 'steel',
+  FAIRY = 'fairy',
+  NORMAL = 'normal',
+}
 
 export interface MoveData {
   name: string;
@@ -117,7 +143,7 @@ const Card: React.FC<CardProps> = ({
   name,
   imageUrl,
   type,
-  rarity = 'common',
+  rarity = CardRarity.COMMON,
   hp,
   maxHp,
   attack,
