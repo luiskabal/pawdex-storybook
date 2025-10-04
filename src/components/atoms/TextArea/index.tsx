@@ -1,6 +1,6 @@
 import React from 'react';
-import { TextField as MuiTextField, TextFieldProps as MuiTextFieldProps } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { TextFieldProps as MuiTextFieldProps } from '@mui/material';
+import { StyledTextField } from './styles';
 
 export interface TextAreaProps extends Omit<MuiTextFieldProps, 'variant' | 'multiline'> {
   /**
@@ -40,31 +40,6 @@ export interface TextAreaProps extends Omit<MuiTextFieldProps, 'variant' | 'mult
    */
   minRows?: number;
 }
-
-const StyledTextField = styled(MuiTextField)(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    borderRadius: theme.spacing(1),
-    '&:hover fieldset': {
-      borderColor: theme.palette.primary.main,
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: theme.palette.primary.main,
-      borderWidth: 2,
-    },
-  },
-  '& .MuiInputLabel-root': {
-    '&.Mui-focused': {
-      color: theme.palette.primary.main,
-    },
-  },
-  '& .MuiFormHelperText-root': {
-    marginLeft: 0,
-    marginTop: theme.spacing(0.5),
-  },
-  '& .MuiInputBase-input': {
-    resize: 'vertical',
-  },
-}));
 
 /**
  * TextArea component for multi-line text input

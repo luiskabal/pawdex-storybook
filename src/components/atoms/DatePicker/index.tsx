@@ -1,8 +1,11 @@
 import React from 'react';
-import { TextField as MuiTextField, TextFieldProps as MuiTextFieldProps } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material';
+import { DatePicker as MuiDatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { StyledTextField, datePickerTheme } from './styles';
 
-export interface DatePickerProps extends Omit<MuiTextFieldProps, 'variant' | 'type'> {
+export interface DatePickerProps {
   /**
    * The variant of the date picker
    */
@@ -24,43 +27,38 @@ export interface DatePickerProps extends Omit<MuiTextFieldProps, 'variant' | 'ty
    */
   required?: boolean;
   /**
-   * The type of date input
+   * The current value of the date picker
    */
-  dateType?: 'date' | 'datetime-local' | 'time';
+  value?: Date | null;
+  /**
+   * Callback fired when the value changes
+   */
+  onChange?: (date: Date | null) => void;
   /**
    * Minimum date value
    */
-  min?: string;
+  minDate?: Date;
   /**
    * Maximum date value
    */
-  max?: string;
+  maxDate?: Date;
+  /**
+   * Whether the field is disabled
+   */
+  disabled?: boolean;
+  /**
+   * Whether the field is read-only
+   */
+  readOnly?: boolean;
+  /**
+   * Whether to show the full width
+   */
+  fullWidth?: boolean;
+  /**
+   * Placeholder text
+   */
+  placeholder?: string;
 }
-
-const StyledTextField = styled(MuiTextField)(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    borderRadius: theme.spacing(1),
-    '&:hover fieldset': {
-      borderColor: theme.palette.primary.main,
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: theme.palette.primary.main,
-      borderWidth: 2,
-    },
-  },
-  '& .MuiInputLabel-root': {
-    '&.Mui-focused': {
-      color: theme.palette.primary.main,
-    },
-  },
-  '& .MuiFormHelperText-root': {
-    marginLeft: 0,
-    marginTop: theme.spacing(0.5),
-  },
-  '& input[type="date"]::-webkit-calendar-picker-indicator': {
-    cursor: 'pointer',
-  },
-}));
 
 /**
  * DatePicker component for date selection
@@ -71,30 +69,47 @@ const DatePicker: React.FC<DatePickerProps> = ({
   helperText,
   error = false,
   required = false,
-  dateType = 'date',
-  min,
-  max,
+  value,
+  onChange,
+  minDate,
+  maxDate,
+  disabled = false,
+  readOnly = false,
   fullWidth = true,
+  placeholder,
   ...props 
 }) => {
   return (
-    <StyledTextField
-      variant={variant}
-      label={label}
-      helperText={helperText}
-      error={error}
-      required={required}
-      type={dateType}
-      InputLabelProps={{
-        shrink: true,
-      }}
-      inputProps={{
-        min,
-        max,
-      }}
-      fullWidth={fullWidth}
-      {...props}
-    />
+    <ThemeProvider theme={datePickerTheme}>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <MuiDatePicker
+          label={label}
+          value={value}
+          onChange={onChange}
+          minDate={minDate}
+          maxDate={maxDate}
+          disabled={disabled}
+          readOnly={readOnly}
+          slots={{
+            textField: StyledTextField,
+          }}
+          slotProps={{
+            textField: {
+              variant,
+              helperText,
+              error,
+              required,
+              fullWidth,
+              placeholder,
+              InputLabelProps: {
+                shrink: true,
+              },
+              ...props,
+            },
+          }}
+        />
+      </LocalizationProvider>
+    </ThemeProvider>
   );
 };
 

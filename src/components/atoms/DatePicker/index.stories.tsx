@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 import DatePicker from './index';
 
 const meta: Meta<typeof DatePicker> = {
@@ -13,10 +14,6 @@ const meta: Meta<typeof DatePicker> = {
       control: { type: 'select' },
       options: ['outlined', 'filled', 'standard'],
     },
-    dateType: {
-      control: { type: 'select' },
-      options: ['date', 'datetime-local', 'time'],
-    },
     error: {
       control: { type: 'boolean' },
     },
@@ -26,13 +23,33 @@ const meta: Meta<typeof DatePicker> = {
     fullWidth: {
       control: { type: 'boolean' },
     },
+    disabled: {
+      control: { type: 'boolean' },
+    },
+    readOnly: {
+      control: { type: 'boolean' },
+    },
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// Interactive wrapper for stories that need state management
+const InteractiveDatePicker = (args: any) => {
+  const [value, setValue] = useState<Date | null>(args.value || null);
+  
+  return (
+    <DatePicker
+      {...args}
+      value={value}
+      onChange={(newValue) => setValue(newValue)}
+    />
+  );
+};
+
 export const Default: Story = {
+  render: (args) => <InteractiveDatePicker {...args} />,
   args: {
     label: 'Birth Date',
     helperText: 'Select your pet\'s birth date',
@@ -40,14 +57,16 @@ export const Default: Story = {
 };
 
 export const WithValue: Story = {
+  render: (args) => <InteractiveDatePicker {...args} />,
   args: {
     label: 'Birth Date',
-    value: '2020-06-15',
+    value: new Date('2020-06-15'),
     helperText: 'Select your pet\'s birth date',
   },
 };
 
 export const Required: Story = {
+  render: (args) => <InteractiveDatePicker {...args} />,
   args: {
     label: 'Birth Date',
     required: true,
@@ -56,6 +75,7 @@ export const Required: Story = {
 };
 
 export const WithError: Story = {
+  render: (args) => <InteractiveDatePicker {...args} />,
   args: {
     label: 'Birth Date',
     error: true,
@@ -64,31 +84,37 @@ export const WithError: Story = {
 };
 
 export const WithMinMax: Story = {
+  render: (args) => <InteractiveDatePicker {...args} />,
   args: {
     label: 'Appointment Date',
-    min: '2024-01-01',
-    max: '2024-12-31',
+    minDate: new Date('2024-01-01'),
+    maxDate: new Date('2024-12-31'),
     helperText: 'Select an appointment date for 2024',
   },
 };
 
-export const DateTime: Story = {
+export const Disabled: Story = {
+  render: (args) => <InteractiveDatePicker {...args} />,
   args: {
-    label: 'Appointment DateTime',
-    dateType: 'datetime-local',
-    helperText: 'Select appointment date and time',
+    label: 'Birth Date',
+    disabled: true,
+    value: new Date('2020-06-15'),
+    helperText: 'This field is disabled',
   },
 };
 
-export const Time: Story = {
+export const ReadOnly: Story = {
+  render: (args) => <InteractiveDatePicker {...args} />,
   args: {
-    label: 'Appointment Time',
-    dateType: 'time',
-    helperText: 'Select appointment time',
+    label: 'Birth Date',
+    readOnly: true,
+    value: new Date('2020-06-15'),
+    helperText: 'This field is read-only',
   },
 };
 
 export const Filled: Story = {
+  render: (args) => <InteractiveDatePicker {...args} />,
   args: {
     label: 'Birth Date',
     variant: 'filled',
@@ -97,6 +123,7 @@ export const Filled: Story = {
 };
 
 export const Standard: Story = {
+  render: (args) => <InteractiveDatePicker {...args} />,
   args: {
     label: 'Birth Date',
     variant: 'standard',

@@ -157,6 +157,13 @@ const ClinicProfileForm: React.FC<ClinicProfileFormProps> = ({
     }));
   };
 
+  const handleDateChange = (field: keyof PetProfileData) => (date: Date | null) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: date ? date.toISOString().split('T')[0] : '', // Convert Date to YYYY-MM-DD string
+    }));
+  };
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     onSubmit?.(formData);
@@ -215,8 +222,8 @@ const ClinicProfileForm: React.FC<ClinicProfileFormProps> = ({
             <Grid item xs={12} md={6}>
               <FormField label="Birth Date">
                 <DatePicker
-                  value={formData.birthDate}
-                  onChange={handleInputChange('birthDate')}
+                  value={formData.birthDate ? new Date(formData.birthDate) : null}
+                  onChange={handleDateChange('birthDate')}
                 />
               </FormField>
             </Grid>
@@ -311,8 +318,8 @@ const ClinicProfileForm: React.FC<ClinicProfileFormProps> = ({
             <Grid item xs={12} md={6}>
               <FormField label="Last Checkup">
                 <DatePicker
-                  value={formData.lastCheckup}
-                  onChange={handleInputChange('lastCheckup')}
+                  value={formData.lastCheckup ? new Date(formData.lastCheckup) : null}
+                  onChange={handleDateChange('lastCheckup')}
                 />
               </FormField>
             </Grid>

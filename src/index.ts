@@ -11,6 +11,7 @@ export { default as Badge } from './components/atoms/Badge';
 export { default as ProgressBar } from './components/atoms/ProgressBar';
 export { default as Avatar } from './components/atoms/Avatar';
 export { default as Divider } from './components/atoms/Divider';
+export { default as Alert } from './components/atoms/Alert';
 
 // Export molecules
 export { default as Card } from './components/molecules/Card';
@@ -33,6 +34,7 @@ export type { BadgeProps, BadgeVariant, BadgeSize, BadgeRarity } from './compone
 export type { ProgressBarProps, ProgressBarVariant, ProgressBarSize } from './components/atoms/ProgressBar';
 export type { AvatarProps, AvatarSize, AvatarVariant, AvatarRarity } from './components/atoms/Avatar';
 export type { DividerProps, DividerVariant, DividerOrientation, DividerThickness } from './components/atoms/Divider';
+export type { AlertProps } from './components/atoms/Alert';
 export type { CardProps, CardRarity, PokemonType, MoveData } from './components/molecules/Card';
 export type { FormFieldProps } from './components/molecules/FormField';
 export type { FormSectionProps } from './components/molecules/FormSection';
@@ -40,4 +42,4 @@ export type { ClinicProfileFormProps, PetProfileData } from './components/organi
 
 // Re-export Material UI theme provider for consumers
 export { ThemeProvider, createTheme } from '@mui/material/styles';
-export { CssBaseline } from '@mui/material';
+export { CssBaseline, Grid, Box, Chip } from '@mui/material';

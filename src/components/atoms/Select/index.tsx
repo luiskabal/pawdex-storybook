@@ -1,13 +1,12 @@
 import React from 'react';
 import { 
-  FormControl, 
   InputLabel, 
   Select as MuiSelect, 
   MenuItem, 
   FormHelperText,
   SelectProps as MuiSelectProps 
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { StyledFormControl, StyledSelectMenu } from './styles';
 
 export interface SelectOption {
   value: string | number;
@@ -46,27 +45,7 @@ export interface SelectProps extends Omit<MuiSelectProps, 'variant'> {
   placeholder?: string;
 }
 
-const StyledFormControl = styled(FormControl)(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    borderRadius: theme.spacing(1),
-    '&:hover .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.primary.main,
-    },
-    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.primary.main,
-      borderWidth: 2,
-    },
-  },
-  '& .MuiInputLabel-root': {
-    '&.Mui-focused': {
-      color: theme.palette.primary.main,
-    },
-  },
-  '& .MuiFormHelperText-root': {
-    marginLeft: 0,
-    marginTop: theme.spacing(0.5),
-  },
-}));
+
 
 /**
  * Select component for dropdown selections
@@ -98,6 +77,7 @@ const Select: React.FC<SelectProps> = ({
         labelId={`select-label-${label}`}
         label={label}
         displayEmpty={!!placeholder}
+        MenuProps={StyledSelectMenu}
         {...props}
       >
         {placeholder && (

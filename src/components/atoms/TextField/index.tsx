@@ -1,6 +1,6 @@
 import React from 'react';
-import { TextField as MuiTextField, TextFieldProps as MuiTextFieldProps } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { TextFieldProps as MuiTextFieldProps } from '@mui/material';
+import { StyledTextField } from './styles';
 
 export interface TextFieldProps extends Omit<MuiTextFieldProps, 'variant'> {
   /**
@@ -28,28 +28,6 @@ export interface TextFieldProps extends Omit<MuiTextFieldProps, 'variant'> {
    */
   required?: boolean;
 }
-
-const StyledTextField = styled(MuiTextField)(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    borderRadius: theme.spacing(1),
-    '&:hover fieldset': {
-      borderColor: theme.palette.primary.main,
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: theme.palette.primary.main,
-      borderWidth: 2,
-    },
-  },
-  '& .MuiInputLabel-root': {
-    '&.Mui-focused': {
-      color: theme.palette.primary.main,
-    },
-  },
-  '& .MuiFormHelperText-root': {
-    marginLeft: 0,
-    marginTop: theme.spacing(0.5),
-  },
-}));
 
 /**
  * TextField component based on Material UI TextField with custom styling

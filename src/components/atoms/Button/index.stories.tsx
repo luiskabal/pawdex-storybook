@@ -8,7 +8,7 @@ const meta: Meta<typeof Button> = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A customizable button component based on Material UI with primary, secondary, and disabled variants.',
+        component: 'A customizable button component that adapts to different themes. Use the theme selector in the toolbar to see how the button changes across Pet, Professional, Dark, Nature, and Ocean themes. Features primary, secondary, tertiary, warning, outline, and disabled variants.',
       },
     },
   },
@@ -16,7 +16,7 @@ const meta: Meta<typeof Button> = {
   argTypes: {
     variant: {
       control: { type: 'select' },
-      options: ['primary', 'secondary', 'disabled'],
+      options: ['primary', 'secondary', 'tertiary', 'warning', 'outline', 'disabled'],
       description: 'The visual style variant of the button',
     },
     children: {
@@ -84,6 +84,27 @@ export const Large: Story = {
     variant: 'primary',
     children: 'Large Button',
     size: 'large',
+  },
+};
+
+export const Tertiary: Story = {
+  args: {
+    variant: 'tertiary',
+    children: 'Tertiary Button',
+  },
+};
+
+export const Warning: Story = {
+  args: {
+    variant: 'warning',
+    children: 'Warning Button',
+  },
+};
+
+export const Outline: Story = {
+  args: {
+    variant: 'outline',
+    children: 'Outline Button',
   },
 };
 
