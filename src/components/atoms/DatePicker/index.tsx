@@ -83,6 +83,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
     <ThemeProvider theme={datePickerTheme}>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <MuiDatePicker
+          key={`datepicker-${label || 'default'}`}
           label={label}
           value={value}
           onChange={onChange}
@@ -90,6 +91,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
           maxDate={maxDate}
           disabled={disabled}
           readOnly={readOnly}
+          enableAccessibleFieldDOMStructure={false}
           slots={{
             textField: StyledTextField,
           }}
