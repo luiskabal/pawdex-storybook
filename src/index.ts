@@ -12,14 +12,20 @@ export { default as ProgressBar } from './components/atoms/ProgressBar';
 export { default as Avatar } from './components/atoms/Avatar';
 export { default as Divider } from './components/atoms/Divider';
 export { default as Alert } from './components/atoms/Alert';
+export { default as PasswordField } from './components/atoms/PasswordField';
+export { default as LoadingButton } from './components/atoms/LoadingButton';
 
 // Export molecules
 export { default as Card } from './components/molecules/Card';
 export { default as FormField } from './components/molecules/FormField';
 export { default as FormSection } from './components/molecules/FormSection';
+export { default as LoginForm } from './components/molecules/LoginForm';
+export { default as SignUpForm } from './components/molecules/SignUpForm';
+export { default as ForgotPasswordForm } from './components/molecules/ForgotPasswordForm';
 
 // Export organisms
 export { default as ClinicProfileForm } from './components/organisms/ClinicProfileForm';
+export { default as AuthLayout } from './components/organisms/AuthLayout';
 
 // Export types
 export type { ButtonProps } from './components/atoms/Button';
@@ -35,10 +41,16 @@ export type { ProgressBarProps, ProgressBarVariant, ProgressBarSize } from './co
 export type { AvatarProps, AvatarSize, AvatarVariant, AvatarRarity } from './components/atoms/Avatar';
 export type { DividerProps, DividerVariant, DividerOrientation, DividerThickness } from './components/atoms/Divider';
 export type { AlertProps } from './components/atoms/Alert';
+export type { PasswordFieldProps } from './components/atoms/PasswordField';
+export type { LoadingButtonProps } from './components/atoms/LoadingButton';
 export type { CardProps, CardRarity, PokemonType, MoveData } from './components/molecules/Card';
 export type { FormFieldProps } from './components/molecules/FormField';
 export type { FormSectionProps } from './components/molecules/FormSection';
+export type { LoginFormProps, LoginFormData } from './components/molecules/LoginForm';
+export type { SignUpFormProps, SignUpFormData } from './components/molecules/SignUpForm';
+export type { ForgotPasswordFormProps, ForgotPasswordFormData } from './components/molecules/ForgotPasswordForm';
 export type { ClinicProfileFormProps, PetProfileData } from './components/organisms/ClinicProfileForm';
+export type { AuthLayoutProps } from './components/organisms/AuthLayout';
 
 // Re-export Material UI theme provider for consumers
 export { ThemeProvider, createTheme } from '@mui/material/styles';

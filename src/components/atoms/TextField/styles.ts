@@ -29,9 +29,12 @@ export const StyledTextField = styled(MuiTextField)(({ theme }) => ({
       borderWidth: '2px',
     },
     
-    '&:hover fieldset': {
-      borderColor: petFieldColors.primary,
+    '&:hover': {
       backgroundColor: petFieldColors.hover,
+      
+      '& fieldset': {
+        borderColor: petFieldColors.primary,
+      },
     },
     
     '&.Mui-focused': {

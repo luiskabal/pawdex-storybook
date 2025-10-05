@@ -61,6 +61,18 @@ export interface ClinicProfileFormProps {
    */
   elevated?: boolean;
   /**
+   * Available species options
+   */
+  speciesOptions?: Array<{ value: string; label: string }>;
+  /**
+   * Available breeds options
+   */
+  breedsOptions?: Array<{ value: string; label: string }>;
+  /**
+   * Callback to fetch breeds for a specific species
+   */
+  onSpeciesChange?: (species: string) => void;
+  /**
    * Custom submit button text
    */
   submitText?: string;
@@ -85,8 +97,8 @@ const ButtonContainer = styled(Box)(({ theme }) => ({
   borderTop: `1px solid ${theme.palette.divider}`,
 }));
 
-// Form options
-const speciesOptions = [
+// Default options - fallback when no props are provided
+const defaultSpeciesOptions = [
   { value: 'dog', label: 'Dog' },
   { value: 'cat', label: 'Cat' },
   { value: 'bird', label: 'Bird' },
@@ -123,6 +135,9 @@ const ClinicProfileForm: React.FC<ClinicProfileFormProps> = ({
   elevated = true,
   submitText = 'Create Profile',
   showCancel = true,
+  speciesOptions = defaultSpeciesOptions,
+  breedsOptions = [],
+  onSpeciesChange,
 }) => {
   const [formData, setFormData] = useState<PetProfileData>({
     petName: '',
@@ -155,6 +170,22 @@ const ClinicProfileForm: React.FC<ClinicProfileFormProps> = ({
       ...prev,
       [field]: event.target.value,
     }));
+  };
+
+  const handleSpeciesChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { value: unknown } }
+  ) => {
+    const newSpecies = event.target.value as string;
+    setFormData(prev => ({
+      ...prev,
+      species: newSpecies,
+      breed: '', // Reset breed when species changes
+    }));
+    
+    // Trigger callback to fetch breeds for the new species
+    if (onSpeciesChange) {
+      onSpeciesChange(newSpecies);
+    }
   };
 
   const handleDateChange = (field: keyof PetProfileData) => (date: Date | null) => {
@@ -193,7 +224,7 @@ const ClinicProfileForm: React.FC<ClinicProfileFormProps> = ({
               <FormField label="Species" required>
                 <Select
                   value={formData.species}
-                  onChange={handleInputChange('species')}
+                  onChange={handleSpeciesChange}
                   options={speciesOptions}
                   placeholder="Choose a species"
                   required
@@ -202,10 +233,12 @@ const ClinicProfileForm: React.FC<ClinicProfileFormProps> = ({
             </Grid>
             <Grid item xs={12} md={6}>
               <FormField label="Breed">
-                <TextField
+                <Select
                   value={formData.breed}
                   onChange={handleInputChange('breed')}
-                  placeholder="e.g., Golden Retriever, Persian"
+                  options={breedsOptions}
+                  placeholder={formData.species ? "Choose a breed" : "Select species first"}
+                  disabled={!formData.species || breedsOptions.length === 0}
                 />
               </FormField>
             </Grid>

@@ -1,10 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import React from 'react';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Card, CardContent } from '@mui/material';
 import Button from './atoms/Button';
 import TextField from './atoms/TextField';
 import Typography from './atoms/Typography';
-import Card from './molecules/Card';
 import Badge from './atoms/Badge';
 import Checkbox from './atoms/Checkbox';
 
@@ -21,29 +19,31 @@ const ThemeShowcase = () => {
       </Typography>
 
       <Grid container spacing={4}>
-        {/* Buttons Section */}
+        {/* Buttons */}
         <Grid item xs={12} md={6}>
           <Card>
-            <Typography variant="h3" sx={{ mb: 2 }}>
-              Buttons
-            </Typography>
+            <CardContent>
+              <Typography variant="h3" sx={{ mb: 2 }}>
+                Buttons
+              </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Button variant="primary">Primary Button</Button>
               <Button variant="secondary">Secondary Button</Button>
-              <Button variant="tertiary">Tertiary Button</Button>
-              <Button variant="warning">Warning Button</Button>
-              <Button variant="outline">Outline Button</Button>
+              <Button variant="primary">Another Primary Button</Button>
+              <Button variant="secondary">Another Secondary Button</Button>
               <Button variant="disabled" disabled>Disabled Button</Button>
             </Box>
+            </CardContent>
           </Card>
         </Grid>
 
-        {/* Form Elements Section */}
+        {/* Form Elements */}
         <Grid item xs={12} md={6}>
           <Card>
-            <Typography variant="h3" sx={{ mb: 2 }}>
-              Form Elements
-            </Typography>
+            <CardContent>
+              <Typography variant="h3" sx={{ mb: 2 }}>
+                Form Elements
+              </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <TextField 
                 label="Sample Text Field" 
@@ -60,15 +60,17 @@ const ThemeShowcase = () => {
                 <Typography variant="body2">Sample Checkbox</Typography>
               </Box>
             </Box>
+            </CardContent>
           </Card>
         </Grid>
 
-        {/* Typography Section */}
-        <Grid item xs={12} md={6}>
+        {/* Typography */}
+        <Grid item xs={12}>
           <Card>
-            <Typography variant="h3" sx={{ mb: 2 }}>
-              Typography
-            </Typography>
+            <CardContent>
+              <Typography variant="h3" sx={{ mb: 2 }}>
+                Typography
+              </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               <Typography variant="h1">Heading 1</Typography>
               <Typography variant="h2">Heading 2</Typography>
@@ -78,33 +80,37 @@ const ThemeShowcase = () => {
               <Typography variant="body2">Small body text - Sed do eiusmod tempor incididunt ut labore.</Typography>
               <Typography variant="caption">Caption text</Typography>
             </Box>
+            </CardContent>
           </Card>
         </Grid>
 
         {/* Badges and Indicators */}
         <Grid item xs={12} md={6}>
           <Card>
-            <Typography variant="h3" sx={{ mb: 2 }}>
-              Badges & Indicators
-            </Typography>
+            <CardContent>
+              <Typography variant="h3" sx={{ mb: 2 }}>
+                Badges & Indicators
+              </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                <Badge variant="primary">Primary</Badge>
-                <Badge variant="secondary">Secondary</Badge>
-                <Badge variant="success">Success</Badge>
-                <Badge variant="warning">Warning</Badge>
-                <Badge variant="error">Error</Badge>
+                <Badge variant="fire">Fire</Badge>
+                <Badge variant="water">Water</Badge>
+                <Badge variant="grass">Grass</Badge>
+                <Badge variant="electric">Electric</Badge>
+                <Badge variant="psychic">Psychic</Badge>
               </Box>
             </Box>
+            </CardContent>
           </Card>
         </Grid>
 
         {/* Theme Information */}
         <Grid item xs={12}>
           <Card>
-            <Typography variant="h3" sx={{ mb: 2 }}>
-              Available Themes
-            </Typography>
+            <CardContent>
+              <Typography variant="h3" sx={{ mb: 2 }}>
+                Available Themes
+              </Typography>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6} md={4}>
                 <Box sx={{ p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
@@ -147,6 +153,7 @@ const ThemeShowcase = () => {
                 </Box>
               </Grid>
             </Grid>
+            </CardContent>
           </Card>
         </Grid>
       </Grid>
